@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="container">
+
+    <h1>Select Difficulty</h1>
+
+    <button onclick="startQuiz('easy')">Easy</button>
+
+    <button onclick="startQuiz('intermediate')">
+        Intermediate
+    </button>
+
+    <button onclick="startQuiz('hard')">
+        Difficult
+    </button>
+
+</div>
+
+<script>
+function startQuiz(level) {
+
+    localStorage.setItem("level", level);
+
+    window.location.href = "quiz.html";
+}
+</script>
+
+</body>
+</html>
