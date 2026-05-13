@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="center">
+
+<div class="container">
+    <h2>Create Account</h2>
+
+    <input type="text" id="username" placeholder="Username">
+    <input type="password" id="password" placeholder="Password">
+
+    <button onclick="validateLogin()">Login</button>
+
+    <p id="message"></p>
+</div>
+
+<script>
+function validateLogin() {
+
+    let password = document.getElementById("password").value;
+
+    // Strong password:
+    // 8+ chars, capital letter, number, special char
+
+    let regex =
+    /^(?=.*[A-Z])(?=.*[0-9])(?=.*[\W]).{8,}$/;
+
+    if(regex.test(password)) {
+
+        localStorage.setItem("user", "loggedin");
+        window.location.href = "home.html";
+
+    } else {
+
+        document.getElementById("message").innerHTML =
+        "Password must contain:<br>" +
+        "- 8+ characters<br>" +
+        "- One capital letter<br>" +
+        "- One number<br>" +
+        "- One special character";
+    }
+}
+</script>
+
+</body>
+</html>
