@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>CypherSafe - Password Builder Challenge</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+ }
+
+        body {
+            font-family: 'Segoe UI', 'Inter', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Main App Container */
+        .app-container {
+            max-width: 650px;
+            width: 100%;
+            background: rgba(18, 25, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 32px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(0, 255, 255, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            padding: 20px 24px;
+            border-bottom: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+    .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #00ffff;
+            text-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+        }
+
+        .score-card {
+            background: rgba(0, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #00ffff;
+            font-family: monospace;
+            font-size: 20px;
+        }
+
+        .level-info {
+            display: flex;
+            justify-content: space-between;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        /* Main Content */
+        .content {
+            padding: 24px;
+        }
+
+        /* User Card */
+        .user-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 20px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-left: 4px solid #00ffff;
+        }
+
+        .user-card h3 {
+            color: #00ffff;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+
+        .user-card p {
+            color: #e2e8f0;
+            font-size: 15px;
+        }
+
+        /* Rules Box */
+        .rules-box {
+            background: rgba(0, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(0, 255, 255, 0.2);
+        }
+
+        .rules-box h4 {
+            color: #00ffff;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+      .rule-item {
+            color: #cbd5e1;
+            font-size: 13px;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .rule-item.valid {
+            color: #10b981;
+        }
+
+        /* Password Builder */
+        .builder-section {
+            background: #0f172a;
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 24px;
+        }
+
+        .available-blocks {
+            margin-bottom: 20px;
+        }
+
+        .available-blocks h4 {
+            color: #94a3b8;
+            font-size: 12px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .blocks-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .block {
+            background: linear-gradient(135deg, #2d3a5e, #1e2a44);
+            padding: 10px 16px;
+            border-radius: 12px;
+            color: #e2e8f0;
+            font-family: monospace;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid rgba(0, 255, 255, 0.3);
+        }
+
+     .block:hover {
+            background: #3b4a6e;
+            transform: translateY(-2px);
+            border-color: #00ffff;
+        }
+
+        .password-area {
+            background: #0a0e1a;
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid #2d3a5e;
+        }
+
+        .password-label {
+            color: #64748b;
+            font-size: 12px;
+            margin-bottom: 8px;
+        }
+
+        .password-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #00ffff;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            outline: none;
+            padding: 8px 0;
+        }
+
+        /* Strength Meter */
+        .strength-meter {
+            margin-top: 16px;
+        }
+
+        .meter-bar {
+            height: 8px;
+            background: #1e293b;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+     .meter-fill {
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            border-radius: 10px;
+        }
+
+        .meter-fill.weak { background: #ef4444; }
+        .meter-fill.fair { background: #f59e0b; }
+        .meter-fill.strong { background: #10b981; }
+        .meter-fill.unbreakable { background: #00ffff; box-shadow: 0 0 10px #00ffff; }
+
+        .meter-text {
+            color: #94a3b8;
+            font-size: 12px;
+        }
+
+        /* Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00ffff, #0099ff);
+            color: #0a0e27;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 255, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2d3a5e;
+            color: #e2e8f0;
+        }
+
+        .btn-secondary:hover {
+            background: #3b4a6e;
+        }
+        /* Feedback Panel */
+        .feedback {
+            background: #0f172a;
+            border-radius: 16px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 4px solid #00ffff;
+        }
+
+        .feedback h4 {
+            color: #00ffff;
+            margin-bottom: 12px;
+        }
+
+        .score-breakdown {
+            display: grid;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            color: #cbd5e1;
+            font-size: 13px;
+        }
+
+        .total-score {
+            border-top: 1px solid #2d3a5e;
+            margin-top: 12px;
+            padding-top: 12px;
+            font-weight: bold;
+            color: #00ffff;
+        }
+
+       /* Level Complete Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: #1e293b;
+            border-radius: 24px;
+            padding: 32px;
+            text-align: center;
+            max-width: 400px;
+            border: 1px solid #00ffff;
+        }
+
+        .modal-content h2 {
+            color: #00ffff;
+            margin-bottom: 16px;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none;
+        }
+
+        .success {
+            color: #10b981;
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="app">
+    <div class="header">
+        <div class="header-top">
+            <div class="logo">
+                🔒 <span>CypherSafe</span>
+            </div>
+            <div class="score-card">
+                Score: <span id="totalScore">0</span>
+            </div>
+        </div>
+        <div class="level-info">
+            <span>Level <span id="currentLevel">1</span> of <span id="totalLevels">6</span></span>
+            <span>🔥 Streak: <span id="streak">0</span></span>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="user-card">
+            <h3>👤 USER PROFILE</h3>
+            <p id="userDescription">Loading...</p>
+        </div>
+
+        <div class="rules-box">
+            <h4>📋 PASSWORD RULES</h4>
+            <div id="rulesList"></div>
+        </div>
+
+        <div class="builder-section">
+            <div class="available-blocks">
+                <h4>🔧 AVAILABLE BLOCKS (Click to add)</h4>
+                <div class="blocks-grid" id="blocksGrid"></div>
+            </div>
+
+            <div class="password-area">
+                <div class="password-label">🔑 YOUR PASSWORD</div>
+                <input type="text" class="password-input" id="passwordInput" placeholder="Build your password..." autocomplete="off">
+            </div>
+
+            <div class="strength-meter">
+                <div class="meter-bar">
+                    <div class="meter-fill" id="meterFill"></div>
+                </div>
+                <div class="meter-text" id="meterText">Enter a password</div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="checkBtn">✅ CHECK PASSWORD</button>
+                <button class="btn btn-secondary" id="resetBtn">🔄 RESET</button>
+            </div>
+        </div>
+
+        <div class="feedback" id="feedbackPanel">
+            <h4>📊 SCORING & FEEDBACK</h4>
+            <div id="feedbackContent">
+                <p style="color: #64748b;">Build a password and click "Check Password"</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Level Definitions
+    const levels = [
+        {
+            user: "Emma (Student)",
+            context: "Creating account for school portal",
+            rules: { minLen: 8, upper: true, lower: true, number: true, symbol: false, noPersonal: false, noDict: false },
+            forbidden: ["password", "qwerty", "123456"],
+            blocks: ["dog", "2020", "L", "7", "Star", "cat", "Sun"],
+            levelName: "Basic Structure"
+        },
+        {
+            user: "Alex (Marketing Team)",
+            context: "Born May 14, 1992 | Pet: Oreo",
+            rules: { minLen: 10, upper: true, lower: true, number: true, symbol: true, noPersonal: true, noDict: false },
+            forbidden: ["alex", "1992", "0514", "oreo", "may14"],
+            blocks: ["Oreo", "1992", "#", "K", "88", "!", "Runner", "Blue", "$"],
+            levelName: "No Personal Info"
+        },
+        {
+            user: "Emily (Designer)",
+            context: "Loves Liverpool FC | Avoid dictionary words",
+            rules: { minLen: 12, upper: true, lower: true, number: true, symbol: true, noPersonal: false, noDict: true },
+            forbidden: ["liverpool", "football", "emily"],
+            blocks: ["Liverpool", "fc", "2024", "$", "Em", "9", "!!", "Red"],
+            levelName: "Dictionary Attack Defense"
+        },
+        {
+            user: "Marcus (Developer)",
+            context: "2FA Simulation - Add backup code after password",
+            rules: { minLen: 12, upper: true, lower: true, number: true, symbol: true, noPersonal: false, noDict: false },
+            forbidden: ["marcus", "coder", "2025"],
+            blocks: ["Dev", "#1", "Code", "@", "77", "Star!", "X9", "$"],
+            levelName: "Multi-Factor Simulation"
+        },
+        {
+            user: "Sarah (Manager)",
+            context: "Old password 'Spring2023!' was leaked! Create completely new one",
+            rules: { minLen: 12, upper: true, lower: true, number: true, symbol: true, noPersonal: false, noDict: false },
+            forbidden: ["spring", "2023", "2024", "summer", "winter"],
+            blocks: ["Spring", "2024", "!", "River", "#", "B9", "Fall", "&"],
+            levelName: "Breach Recovery"
+        },
+        {
+            user: "Expert Mode (CISO)",
+            context: "No blocks - type manually! 16+ chars, 2 symbols, 2 numbers",
+            rules: { minLen: 16, upper: true, lower: true, number: true, symbol: true, noPersonal: false, noDict: false },
+            forbidden: [],
+            blocks: [], // No blocks for expert mode
+            levelName: "Expert Challenge"
+        }
+    ];
+    let currentLevelIndex = 0;
+    let totalScore = 0;
+    let streak = 0;
+    let currentPassword = "";
+
+    // Helper functions
+    function updateUI() {
+        document.getElementById("totalScore").innerText = totalScore;
+        document.getElementById("currentLevel").innerText = currentLevelIndex + 1;
+        document.getElementById("totalLevels").innerText = levels.length;
+        document.getElementById("streak").innerText = streak;
+        
+        const level = levels[currentLevelIndex];
+        document.getElementById("userDescription").innerHTML = `<strong>${level.user}</strong><br>${level.context}`;
+        
+        // Update rules
+        const rulesHtml = `
+            <div class="rule-item" id="ruleLen">${level.rules.minLen}+ characters</div>
+            <div class="rule-item" id="ruleUpper">Contains uppercase letter</div>
+            <div class="rule-item" id="ruleLower">Contains lowercase letter</div>
+            <div class="rule-item" id="ruleNumber">Contains number</div>
+            ${level.rules.symbol ? '<div class="rule-item" id="ruleSymbol">Contains symbol (!@#$%^&*)</div>' : ''}
+            ${level.rules.noPersonal ? '<div class="rule-item" id="rulePersonal">No personal info (birth year, name, pet)</div>' : ''}
+            ${level.rules.noDict ? '<div class="rule-item" id="ruleDict">No dictionary words (even with numbers)</div>' : ''}
+        `;
+        document.getElementById("rulesList").innerHTML = rulesHtml;
+        
+        // Update blocks
+        const blocksGrid = document.getElementById("blocksGrid");
+        if (level.blocks.length > 0) {
+            blocksGrid.innerHTML = level.blocks.map(block => 
+                `<div class="block" onclick="addToPassword('${block.replace(/'/g, "\\'")}')">${block}</div>`
+            ).join('');
+        } else {
+            blocksGrid.innerHTML = '<p style="color: #64748b;">Expert mode: Type your password manually</p>';
+        }
+        
+       document.getElementById("passwordInput").value = "";
+        currentPassword = "";
+        updateStrengthMeter("");
+        
+        // Clear feedback
+        document.getElementById("feedbackContent").innerHTML = '<p style="color: #64748b;">Build a password and click "Check Password"</p>';
+    }
+    
+    function addToPassword(block) {
+        const input = document.getElementById("passwordInput");
+        input.value += block;
+        currentPassword = input.value;
+        updateStrengthMeter(currentPassword);
+    }
+    
+    function updateStrengthMeter(password) {
+        const meterFill = document.getElementById("meterFill");
+        const meterText = document.getElementById("meterText");
+        
+        let strength = 0;
+        if (password.length >= 8) strength += 20;
+        if (password.length >= 12) strength += 10;
+        if (/[A-Z]/.test(password)) strength += 20;
+        if (/[a-z]/.test(password)) strength += 20;
+        if (/[0-9]/.test(password)) strength += 20;
+        if (/[!@#$%^&*]/.test(password)) strength += 20;
+        if (password.length >= 16) strength += 10;
+        
+        let level = "weak";
+        let text = "Weak";
+        if (strength >= 80) { level = "unbreakable"; text = "Unbreakable! 🔒"; }
+        else if (strength >= 60) { level = "strong"; text = "Strong ✅"; }
+        else if (strength >= 40) { level = "fair"; text = "Fair ⚠️"; }
+        else { level = "weak"; text = "Weak ❌"; }
+        
+        meterFill.className = `meter-fill ${level}`;
+        meterFill.style.width = `${Math.min(strength, 100)}%`;
+        meterText.innerText = text;
+    }
+    
+    function checkPassword() {
+        const password = document.getElementById("passwordInput").value;
+        const level = levels[currentLevelIndex];
+        let score = 0;
+        let feedback = [];
+        
+      // Check rules
+        if (password.length >= level.rules.minLen) {
+            score += 20;
+            feedback.push(`✅ Length: ${password.length}/${level.rules.minLen}+ chars (+20)`);
+            document.getElementById("ruleLen")?.classList.add("valid");
+        } else {
+            feedback.push(`❌ Length: ${password.length}/${level.rules.minLen}+ chars (0)`);
+        }
+        
+        if (level.rules.upper && /[A-Z]/.test(password)) {
+            score += 15;
+            feedback.push(`✅ Contains uppercase (+15)`);
+        } else if (level.rules.upper) {
+            feedback.push(`❌ Missing uppercase letter (0)`);
+        }
+        
+        if (level.rules.lower && /[a-z]/.test(password)) {
+            score += 15;
+            feedback.push(`✅ Contains lowercase (+15)`);
+        } else if (level.rules.lower) {
+            feedback.push(`❌ Missing lowercase letter (0)`);
+        }
+        
+        if (level.rules.number && /[0-9]/.test(password)) {
+            score += 15;
+            feedback.push(`✅ Contains number (+15)`);
+        } else if (level.rules.number) {
+            feedback.push(`❌ Missing number (0)`);
+        }
+       if (level.rules.symbol && /[!@#$%^&*]/.test(password)) {
+            score += 15;
+            feedback.push(`✅ Contains symbol (+15)`);
+        } else if (level.rules.symbol) {
+            feedback.push(`❌ Missing symbol (!@#$%^&*) (0)`);
+        }
+        
+        // Personal info check
+        if (level.rules.noPersonal) {
+            let hasPersonal = false;
+            level.forbidden.forEach(word => {
+                if (password.toLowerCase().includes(word.toLowerCase())) {
+                    hasPersonal = true;
+                }
+            });
+            if (!hasPersonal) {
+                score += 20;
+                feedback.push(`✅ No personal info detected (+20)`);
+            } else {
+                feedback.push(`❌ Contains personal info (birth year, name, pet) (0)`);
+            }
+        }
+        
+        // Dictionary word check (simplified)
+        if (level.rules.noDict) {
+            const commonWords = ["liverpool", "football", "password", "admin", "welcome"];
+            let hasDict = false;
+            commonWords.forEach(word => {
+                if (password.toLowerCase().includes(word)) {
+                    hasDict = true;
+                }
+            });
+            if (!hasDict) {
+                score += 15;
+                feedback.push(`✅ No dictionary words found (+15)`);
+            } else {
+                feedback.push(`❌ Contains dictionary word (vulnerable to attack) (0)`);
+            }
+        }
+        
+        // Bonus: extra symbols
+        const symbolCount = (password.match(/[!@#$%^&*]/g) || []).length;
+        if (symbolCount >= 2) {
+            score += 10;
+            feedback.push(`✨ Bonus: Multiple symbols used (+10)`);
+        }
+        
+        // Check if password meets all required rules
+        let allRulesMet = true;
+        if (level.rules.minLen && password.length < level.rules.minLen) allRulesMet = false;
+        if (level.rules.upper && !/[A-Z]/.test(password)) allRulesMet = false;
+        if (level.rules.lower && !/[a-z]/.test(password)) allRulesMet = false;
+        if (level.rules.number && !/[0-9]/.test(password)) allRulesMet = false;
+        if (level.rules.symbol && !/[!@#$%^&*]/.test(password)) allRulesMet = false;
+        
+        if (allRulesMet) {
+            streak++;
+            totalScore += score;
+            feedback.push(`\n🎉 LEVEL COMPLETE! +${score} points!`);
+            feedback.push(`🔥 Streak: ${streak}`);
+            
+            document.getElementById("feedbackContent").innerHTML = `
+                <div class="score-breakdown">
+                    ${feedback.map(f => `<div class="score-row">${f}</div>`).join('')}
+                    <div class="total-score">Total Score: ${totalScore}</div>
+                </div>
+                <button class="btn btn-primary" onclick="nextLevel()" style="margin-top: 16px;">➡️ NEXT LEVEL</button>
+            `;
+            
+            // Auto-update score display
+            document.getElementById("totalScore").innerText = totalScore;
+        } else {
+            streak = 0;
+            feedback.push(`\n❌ Password doesn't meet all requirements. Try again!`);
+            feedback.push(`🔥 Streak reset to 0`);
+            
+            document.getElementById("feedbackContent").innerHTML = `
+                <div class="score-breakdown">
+                    ${feedback.map(f => `<div class="score-row">${f}</div>`).join('')}
+                    <div class="total-score">Current Score: ${totalScore}</div>
+                </div>
+            `;
+            document.getElementById("streak").innerText = streak;
+        }
+        
+        // Update rule colors
+        updateStrengthMeter(password);
+    }
+    
+    function resetPassword() {
+        document.getElementById("passwordInput").value = "";
+        currentPassword = "";
+        updateStrengthMeter("");
+        document.getElementById("feedbackContent").innerHTML = '<p style="color: #64748b;">Password reset. Build a new one!</p>';
+    }
+       function nextLevel() {
+        if (currentLevelIndex + 1 < levels.length) {
+            currentLevelIndex++;
+            updateUI();
+        } else {
+            // Game complete
+            document.getElementById("feedbackContent").innerHTML = `
+                <div style="text-align: center;">
+                    <h3 style="color: #00ffff;">🏆 Congratulations! 🏆</h3>
+                    <p>You've mastered password security!</p>
+                    <p>Final Score: ${totalScore}/${levels.length * 100}</p>
+                    <button class="btn btn-primary" onclick="resetGame()" style="margin-top: 16px;">🔄 PLAY AGAIN</button>
+                </div>
+            `;
+        }
+    }
+    
+   function resetGame() {
+        currentLevelIndex = 0;
+        totalScore = 0;
+        streak = 0;
+        updateUI();
+    }
+    
+    // Expose functions globally
+    window.addToPassword = addToPassword;
+    window.nextLevel = nextLevel;
+    window.resetGame = resetGame;
+    
+    // Event listeners
+    document.getElementById("checkBtn").addEventListener("click", checkPassword);
+    document.getElementById("resetBtn").addEventListener("click", resetPassword);
+    document.getElementById("passwordInput").addEventListener("input", (e) => {
+        currentPassword = e.target.value;
+        updateStrengthMeter(currentPassword);
+    });
+
+  // Initialize
+  updateUI();
+  </script>
+  </body>
+  </html>
+  
